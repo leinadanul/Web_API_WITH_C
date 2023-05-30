@@ -17,6 +17,8 @@ namespace API_YU.Services.CharacterService
 
         Task<ServiceResponse<List<GetCharacterDto>>> DeleteCharacter(int id);
 
+        //Task<ServiceResponse<List<GetCharacterDto>>> Save(AddCharacterDto NewCharacter);
+
 
     }
 }

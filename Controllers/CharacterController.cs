@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API_YU.Services.CharacterService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_YU.Controllers
@@ -36,6 +37,7 @@ namespace API_YU.Controllers
         {
             return Ok(await _characterService.AddCharacter(newCharacter));
         }
+
 
         [HttpPut]
         public async Task<ActionResult<ServiceResponse<List<GetCharacterDto>>>> UpdateCharacter(UpdateCharacterDto updateCharacter)

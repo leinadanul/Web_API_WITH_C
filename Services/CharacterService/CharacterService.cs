@@ -9,13 +9,15 @@ namespace API_YU.Services.CharacterService
     public class CharacterService : ICharacterService
     {   
         private static List<Character> characters  = new List<Character> {
-            new Character(),
-            new Character{Id = 1, Name = "Luis"}
+            //new Character(),
+            //new Character{Id = 1, Name = "Luis"}
         };
         private readonly IMapper _mapper;
+        private readonly DataContext _context;
 
-        public CharacterService(IMapper mapper)
+        public CharacterService(IMapper mapper, DataContext context)
         {
+            _context = context;
             _mapper = mapper;
         }
         
@@ -23,8 +25,12 @@ namespace API_YU.Services.CharacterService
         {
             var ServiceResponse = new ServiceResponse<List<GetCharacterDto>>();
             var character = _mapper.Map<Character>(newCharacter);
-            character.Id = characters.Max(p => p.Id) + 1;
-            characters.Add(character);
+            //character.Id = characters.Max(p => p.Id) + 1;
+
+            _context.Characters.Add(character);
+            await _context.SaveChangesAsync();
+
+            //characters.Add(character);
             ServiceResponse.Data = characters.Select(p=> _mapper.Map<GetCharacterDto>(p)).ToList();
             return ServiceResponse;
         }
@@ -51,15 +57,16 @@ namespace API_YU.Services.CharacterService
         public async Task<ServiceResponse<List<GetCharacterDto>>> GetAllCharacters()
         {
             var ServiceResponse = new ServiceResponse<List<GetCharacterDto>>();
-            ServiceResponse.Data = characters.Select(p=> _mapper.Map<GetCharacterDto>(p)).ToList();
+            var dbCharacters = await _context.Characters.ToListAsync();
+            ServiceResponse.Data = dbCharacters.Select(p=> _mapper.Map<GetCharacterDto>(p)).ToList();
             return ServiceResponse;
         }
 
         public async Task<ServiceResponse<GetCharacterDto>> GetCharacterById(int id)
         {
             var ServiceResponse = new ServiceResponse<GetCharacterDto>();
-            var character = characters.FirstOrDefault(p=> p.Id == id);
-            ServiceResponse.Data = _mapper.Map<GetCharacterDto>(character);
+            var dbCharacter = await _context.Characters.FirstOrDefaultAsync(p=> p.Id == id);
+            ServiceResponse.Data = _mapper.Map<GetCharacterDto>(dbCharacter);
             return ServiceResponse;
         }
 
